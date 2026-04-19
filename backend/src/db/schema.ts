@@ -24,7 +24,7 @@ export const users = pgTable('users', {
   id: text('id').primaryKey(),
   email: text('email').notNull(),
   name: text('name').notNull(),
-  avatar: text('avatar'),
+  avatar: text('avatar').notNull(),
   role: roleEnum('role').default('user').notNull(),
   createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { mode: 'date' })
@@ -40,7 +40,7 @@ export const posts = pgTable('posts', {
   description: text('description').notNull(),
   type: typeEnum('type').default('feature').notNull(),
   status: statusEnum('status').default('under-review').notNull(),
-  createAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { mode: 'date' })
     .notNull()
     .defaultNow()
@@ -68,20 +68,40 @@ export const votes = pgTable(
   ],
 );
 
+// comments table
+export const comments = pgTable('comments', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  content: text('content').notNull(),
+  authorId: text('author_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  postId: uuid('post_id')
+    .references(() => posts.id, { onDelete: 'cascade' })
+    .notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow(),
+});
+
 // soft relations
 export const usersRelations = relations(users, ({ many }) => ({
   posts: many(posts),
   votes: many(votes),
+  comments: many(comments),
 }));
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
   author: one(users, { fields: [posts.authorId], references: [users.id] }),
   votes: many(votes),
+  comments: many(comments),
 }));
 
 export const votesRelations = relations(votes, ({ one }) => ({
   voter: one(users, { fields: [votes.userId], references: [users.id] }),
   post: one(posts, { fields: [votes.postId], references: [posts.id] }),
+}));
+
+export const commentsRelations = relations(comments, ({ one }) => ({
+  author: one(users, { fields: [comments.authorId], references: [users.id] }),
+  post: one(posts, { fields: [comments.postId], references: [posts.id] }),
 }));
 
 // type inference
@@ -93,3 +113,8 @@ export type NewPost = typeof posts.$inferInsert;
 
 export type Vote = typeof votes.$inferSelect;
 export type NewVote = typeof votes.$inferInsert;
+
+export type Comment = typeof comments.$inferSelect;
+export type NewComment = typeof comments.$inferInsert;
+
+export type Status = (typeof statusEnum.enumValues)[number];
