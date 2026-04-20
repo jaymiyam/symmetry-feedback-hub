@@ -12,8 +12,6 @@ export const handleUpvote = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    //   TODO: check if post exist?
-
     const vote = await upvote(postId, userId);
 
     // upvote uses onConflictDoNothing, so if it returns undefined,
@@ -41,7 +39,6 @@ export const handleCancelUpvote = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    //   TODO: check if post exist?
     const vote = await cancelUpvote(postId, userId);
     res.status(200).json(vote);
   } catch (error) {
