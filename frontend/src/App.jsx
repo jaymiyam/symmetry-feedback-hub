@@ -6,6 +6,7 @@ import PostPage from './pages/PostPage';
 import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 function App() {
   const { isClerkLoaded } = useAuthToken();
@@ -33,7 +34,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen">
+      <main className="min-h-screen max-w-5xl mx-auto px-4 py-8">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route
@@ -47,6 +48,7 @@ function App() {
           <Route path="/posts/:postId" element={<PostPage />} />
         </Routes>
       </main>
+      <Footer />
     </>
   );
 }
