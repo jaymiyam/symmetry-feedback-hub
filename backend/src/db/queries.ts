@@ -54,7 +54,7 @@ export const isAdmin = async (userId: string) => {
   const user = await getUserById(userId);
   return user?.role === 'admin';
 };
-
+// TODO: refine selected fields of "with?"
 // posts
 export const createPost = async (data: NewPost) => {
   const [insertedPost]: Post[] = await db
@@ -83,6 +83,7 @@ export const getPostsByAuthor = async (authorId: string) => {
   return await db.query.posts.findMany({
     where: eq(posts.authorId, authorId),
     orderBy: (posts, { desc }) => [desc(posts.createdAt)],
+    with: { author: true, votes: true },
   });
 };
 

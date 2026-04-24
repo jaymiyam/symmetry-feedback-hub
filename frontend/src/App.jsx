@@ -7,6 +7,7 @@ import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import NewFeedbackModal from './components/NewFeedbackModal';
 
 function App() {
   const { isClerkLoaded } = useAuthToken();
@@ -47,6 +48,7 @@ function App() {
           />
           <Route path="/posts/:postId" element={<PostPage />} />
         </Routes>
+        <NewFeedbackModal />
       </main>
       <Footer />
     </>

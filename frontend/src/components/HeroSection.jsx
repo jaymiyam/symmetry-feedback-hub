@@ -6,11 +6,11 @@ const HeroSection = () => {
     <section className="hero">
       <div className="w-full hero-content flex-col lg:flex-row-reverse justify-between">
         <img
-          src="https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.webp"
-          className="max-w-sm rounded-lg shadow-2xl"
+          src="/hero-bg.png"
+          className="block w-full max-w-72 object-cover"
         />
         <div>
-          <h1 className="text-5xl font-bold font-mono">
+          <h1 className="text-5xl tracking-tight font-bold font-mono">
             Symmetry Feedback Hub
           </h1>
           <p className="py-6">
@@ -27,7 +27,9 @@ const HeroSection = () => {
           <Show when="signed-in">
             <button
               className="btn btn-primary font-mono tracking-tight"
-              onClick={() => document.getElementById('my_modal_1').showModal()}
+              onClick={() =>
+                document.getElementById('new-feedback-modal').showModal()
+              }
             >
               Submit New Feedback
             </button>

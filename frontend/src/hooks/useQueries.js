@@ -77,6 +77,7 @@ export const useDeletePost = () => {
   });
 };
 
+// TODO: optimistic updating?
 export const useUpvote = () => {
   const queryClient = useQueryClient();
 

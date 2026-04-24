@@ -30,13 +30,15 @@ const Navbar = () => {
             </SignUpButton>
           </Show>
           <Show when="signed-in">
-            <Link
-              to="/create"
+            <button
               className="btn btn-primary btn-sm gap-1 font-mono"
+              onClick={() =>
+                document.getElementById('new-feedback-modal').showModal()
+              }
             >
               <PlusIcon className="size-4" />
               <span className="hidden sm:inline">New Feedback</span>
-            </Link>
+            </button>
             <Link
               to="/profile"
               className="btn btn-ghost btn-sm gap-1 font-mono"

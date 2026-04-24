@@ -1,10 +1,17 @@
 import React from 'react';
+import { useDeletePost } from '../hooks/useQueries';
 import { Link } from 'react-router';
-import { ArrowBigUpDashIcon } from 'lucide-react';
 import { TYPE_BADGES, STATUS_BADGES } from '../constants/styles';
+import { Trash2Icon, PlusIcon, ArrowBigUpDashIcon } from 'lucide-react';
 import VoteButton from './VoteButton';
 
-const HomeFeedbackItem = ({ post }) => {
+const ProfileFeedbackItem = ({ post }) => {
+  const deletePost = useDeletePost();
+  const handleDelete = () => {
+    if (confirm('Delete this feedback?')) {
+      deletePost.mutate(post.id);
+    }
+  };
   return (
     <li className="list-row items-center hover:bg-base-200">
       <Link to={`/posts/${post.id}`}>
@@ -27,21 +34,20 @@ const HomeFeedbackItem = ({ post }) => {
         </div>
       </Link>
       <div className="flex gap-3 items-center justify-center">
-        <div className="avatar">
-          <div className="ring-primary ring-offset-base-100 size-8 rounded-full ring-2 ring-offset-2">
-            <img src={post.author.avatar} />
-          </div>
-        </div>
-        <div className="flex flex-col">
-          <span className="font-mono">{post.author.name}</span>
-          <small className="font-mono">
-            {new Date(post.createdAt).toLocaleDateString()}
-          </small>
-        </div>
+        <small className="font-mono">
+          {new Date(post.createdAt).toLocaleDateString()}
+        </small>
       </div>
       <VoteButton post={post} />
+      <button
+        onClick={handleDelete}
+        className="btn btn-ghost btn-xs text-error gap-1"
+        disabled={deletePost.isPending}
+      >
+        <Trash2Icon className="size-3" /> Delete
+      </button>
     </li>
   );
 };
 
-export default HomeFeedbackItem;
+export default ProfileFeedbackItem;

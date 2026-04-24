@@ -87,7 +87,7 @@ export const handleGetPostsByAuthor = async (req: Request, res: Response) => {
 
 export const handleUpdatePost = async (req: Request, res: Response) => {
   try {
-    const { userId } = getAuth(req);
+    const { userId, sessionClaims } = getAuth(req);
     const { postId } = req.params as { postId: string };
 
     if (!userId) {
@@ -100,8 +100,9 @@ export const handleUpdatePost = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Posts not found' });
     }
 
-    const isUserAdmin = await isAdmin(userId);
-    if (!isUserAdmin) {
+    // const isUserAdmin = await isAdmin(userId);
+    const userRole = sessionClaims?.role;
+    if (userRole !== 'admin') {
       return res
         .status(403)
         .json({ error: 'Forbidden: Admin access required' });
@@ -118,7 +119,7 @@ export const handleUpdatePost = async (req: Request, res: Response) => {
 };
 export const handleDeletePost = async (req: Request, res: Response) => {
   try {
-    const { userId } = getAuth(req);
+    const { userId, sessionClaims } = getAuth(req);
     const { postId } = req.params as { postId: string };
 
     if (!userId) {
@@ -131,12 +132,12 @@ export const handleDeletePost = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Posts not found' });
     }
 
-    const isUserAdmin = await isAdmin(userId);
+    const userRole = sessionClaims?.role;
 
-    if (userId !== post?.authorId && !isUserAdmin) {
+    if (userId !== post?.authorId && userRole !== 'admin') {
       return res
         .status(403)
-        .json({ error: 'Forbidden: Admin access required' });
+        .json({ error: 'Forbidden: You have no access right to this action.' });
     }
 
     const deletedPost = await deletePost(postId);
