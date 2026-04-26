@@ -1,6 +1,6 @@
 import { db } from './index';
 import { users, posts, votes } from './schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import type {
   User,
   NewUser,
@@ -54,7 +54,7 @@ export const isAdmin = async (userId: string) => {
   const user = await getUserById(userId);
   return user?.role === 'admin';
 };
-// TODO: refine selected fields of "with?"
+
 // posts
 export const createPost = async (data: NewPost) => {
   const [insertedPost]: Post[] = await db
@@ -63,11 +63,21 @@ export const createPost = async (data: NewPost) => {
     .returning();
   return insertedPost;
 };
+
 export const getAllPosts = async () => {
   return await db.query.posts.findMany({
     with: {
-      author: true,
-      votes: true,
+      author: {
+        columns: {
+          name: true,
+          avatar: true,
+        },
+      },
+      votes: {
+        columns: {
+          userId: true,
+        },
+      },
     },
     orderBy: (posts, { desc }) => [desc(posts.createdAt)],
   });
@@ -75,7 +85,19 @@ export const getAllPosts = async () => {
 export const getPostById = async (postId: string) => {
   return await db.query.posts.findFirst({
     where: eq(posts.id, postId),
-    with: { author: true, votes: true },
+    with: {
+      author: {
+        columns: {
+          name: true,
+          avatar: true,
+        },
+      },
+      votes: {
+        columns: {
+          userId: true,
+        },
+      },
+    },
   });
 };
 
@@ -83,8 +105,37 @@ export const getPostsByAuthor = async (authorId: string) => {
   return await db.query.posts.findMany({
     where: eq(posts.authorId, authorId),
     orderBy: (posts, { desc }) => [desc(posts.createdAt)],
-    with: { author: true, votes: true },
+    with: {
+      votes: {
+        columns: {
+          userId: true,
+        },
+      },
+    },
   });
+};
+
+// get author stats
+export const getAuthorStats = async (authorId: string) => {
+  const postResult = await db
+    .select({
+      count: sql<number>`count(${posts.id})`,
+    })
+    .from(posts)
+    .where(eq(posts.authorId, authorId));
+
+  const voteResult = await db
+    .select({
+      count: sql<number>`count(${votes.id})`,
+    })
+    .from(votes)
+    .innerJoin(posts, eq(votes.postId, posts.id))
+    .where(eq(posts.authorId, authorId));
+
+  return {
+    postCount: postResult[0]?.count || 0,
+    voteCount: voteResult[0]?.count || 0,
+  };
 };
 
 export const updatePost = async (postId: string, data: Partial<NewPost>) => {

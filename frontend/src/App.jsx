@@ -8,6 +8,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import NewFeedbackModal from './components/NewFeedbackModal';
+import ScrollToTop from './components/ScrollToTop';
+import NotFoundPage from './components/NotFoundPage';
 
 function App() {
   const { isClerkLoaded } = useAuthToken();
@@ -36,6 +38,7 @@ function App() {
     <>
       <Navbar />
       <main className="min-h-screen max-w-5xl mx-auto px-4 py-8">
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route
@@ -47,6 +50,8 @@ function App() {
             }
           />
           <Route path="/posts/:postId" element={<PostPage />} />
+          {/* Catch all route */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <NewFeedbackModal />
       </main>

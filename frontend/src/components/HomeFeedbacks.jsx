@@ -35,7 +35,7 @@ const HomeFeedbacks = () => {
 
   return (
     <section>
-      <header className="p-4 flex gap-4 items-center">
+      <header className="p-4 flex flex-col md:flex-row gap-4 md:items-center">
         <h2 className="text-2xl font-bold font-mono">Topics</h2>
         {/* filtering */}
         <div className="flex gap-2">

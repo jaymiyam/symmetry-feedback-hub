@@ -28,7 +28,7 @@ const VoteButton = ({ post }) => {
     <button
       onClick={handleVote}
       disabled={isPending}
-      className={`btn btn-ghost ${hasVoted ? 'text-primary bg-primary/10' : 'text-base-content/60'}`}
+      className={`hidden sm:flex btn btn-ghost ${hasVoted ? 'text-primary bg-primary/10' : 'text-base-content/60'}`}
     >
       <ArrowBigUpDashIcon
         className={`size-5 text-primary transition-transform ${hasVoted ? 'fill-current scale-110' : ''} ${isPending ? 'animate-pulse' : ''}`}

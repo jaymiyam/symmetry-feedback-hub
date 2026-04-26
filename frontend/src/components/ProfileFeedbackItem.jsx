@@ -16,24 +16,24 @@ const ProfileFeedbackItem = ({ post }) => {
     <li className="list-row items-center hover:bg-base-200">
       <Link to={`/posts/${post.id}`}>
         <div className="list-col-grow">
-          <h3 className="text-xl font-medium mb-2 line-clamp-1">
+          <h3 className="text-lg md:text-xl font-medium mb-2 leading-tight md:line-clamp-1">
             {post.title}
           </h3>
           <div className="flex gap-2 items-center">
             <div
-              className={`badge badge-outline ${TYPE_BADGES[post.type]} font-mono`}
+              className={`badge badge-outline text-xs md:text-sm whitespace-nowrap ${TYPE_BADGES[post.type]} font-mono`}
             >
               {post.type}
             </div>
             <div
-              className={`badge badge-outline ${STATUS_BADGES[post.status]} font-mono`}
+              className={`badge badge-outline text-xs md:text-sm whitespace-nowrap ${STATUS_BADGES[post.status]} font-mono`}
             >
               {post.status}
             </div>
           </div>
         </div>
       </Link>
-      <div className="flex gap-3 items-center justify-center">
+      <div className="hidden sm:flex gap-3 items-center justify-center">
         <small className="font-mono">
           {new Date(post.createdAt).toLocaleDateString()}
         </small>

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
+  getAuthorStats,
   getAllPosts,
   getPostById,
   getPostsByAuthor,
@@ -14,6 +15,15 @@ export const QUERY_KEYS = {
   POSTS: ['posts'],
   POST: (postId) => ['post', postId],
   AUTHOR_POSTS: ['posts', 'author'],
+  STATS: (authorId) => ['stats', authorId],
+};
+
+export const useGetAuthorStats = (authorId) => {
+  return useQuery({
+    queryKey: QUERY_KEYS.STATS(authorId),
+    queryFn: () => getAuthorStats(authorId),
+    enabled: !!authorId,
+  });
 };
 
 export const useGetAllPosts = () => {
@@ -77,7 +87,6 @@ export const useDeletePost = () => {
   });
 };
 
-// TODO: optimistic updating?
 export const useUpvote = () => {
   const queryClient = useQueryClient();
 

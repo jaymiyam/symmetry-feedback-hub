@@ -8,6 +8,11 @@ export const syncUser = async (userData) => {
   return data;
 };
 
+export const getAuthorStats = async (authorId) => {
+  const { data } = await api.get(`/users/${authorId}/stats`);
+  return data;
+};
+
 // posts
 export const getAllPosts = async () => {
   const { data } = await api.get('/posts');

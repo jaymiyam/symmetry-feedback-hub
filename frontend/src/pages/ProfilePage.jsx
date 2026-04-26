@@ -40,7 +40,7 @@ const ProfilePage = () => {
               No feedbacks yet
             </h3>
             <p className="text-base-content/40 text-sm">
-              Be the first to share something!
+              Share something with fellow Symmetry creators!
             </p>
           </div>
         </div>

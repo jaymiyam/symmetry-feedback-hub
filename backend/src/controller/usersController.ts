@@ -1,4 +1,4 @@
-import { upsertUser } from '../db/queries';
+import { upsertUser, getAuthorStats } from '../db/queries';
 import type { Response, Request } from 'express';
 import { getAuth } from '@clerk/express';
 
@@ -26,6 +26,25 @@ export const syncUser = async (req: Request, res: Response) => {
 
     // 200: OK
     return res.status(200).json(user);
+  } catch (error) {
+    console.log(error);
+    // 500: internal server error
+    res.status(500).json({ error: 'Failed to sync user' });
+  }
+};
+
+export const handleGetUserStats = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params as { userId: string };
+
+    if (!userId) {
+      // 401: unauthorized
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const stats = await getAuthorStats(userId);
+
+    return res.status(200).json(stats);
   } catch (error) {
     console.log(error);
     // 500: internal server error

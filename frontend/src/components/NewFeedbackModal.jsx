@@ -16,11 +16,21 @@ const NewFeedbackModal = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (!formData.title.trim() || !formData.description.trim()) {
+      return alert('Please fill in all fields with valid content!');
+    }
+
     createPost.mutate(formData, {
-      onSuccess: () => {
+      onSuccess: (newPost) => {
         document.getElementById('new-feedback-modal').close();
-        navigate('/profile');
+        navigate(`/posts/${newPost.id}`);
       },
+    });
+
+    setFormData({
+      title: '',
+      description: '',
+      type: 'feature',
     });
   };
 
