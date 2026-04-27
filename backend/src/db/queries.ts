@@ -1,5 +1,5 @@
 import { db } from './index';
-import { users, posts, votes } from './schema';
+import { users, posts, votes, comments } from './schema';
 import { eq, and, sql } from 'drizzle-orm';
 import type {
   User,
@@ -9,6 +9,8 @@ import type {
   Vote,
   NewVote,
   Status,
+  Comment,
+  NewComment,
 } from './schema';
 
 // users
@@ -191,4 +193,42 @@ export const checkUserVote = async (postId: string, userId: string) => {
   });
 
   return !!vote; //logical NOT operator applied twice = transform value into boolean
+};
+
+// comments
+export const getCommentsByPost = async (postId: string) => {
+  return db.query.comments.findMany({
+    where: eq(comments.postId, postId),
+    with: {
+      author: {
+        columns: {
+          name: true,
+          avatar: true,
+        },
+      },
+    },
+    orderBy: (comments, { asc }) => [asc(comments.createdAt)],
+  });
+};
+
+export const getCommentById = async (commentId: string) => {
+  return await db.query.comments.findFirst({
+    where: eq(comments.id, commentId),
+  });
+};
+
+export const createComment = async (data: NewComment) => {
+  const [insertedComment]: Comment[] = await db
+    .insert(comments)
+    .values(data)
+    .returning();
+  return insertedComment;
+};
+
+export const deleteComment = async (commentId: string) => {
+  const [deletedComment]: Comment[] = await db
+    .delete(comments)
+    .where(eq(comments.id, commentId))
+    .returning();
+  return deletedComment;
 };

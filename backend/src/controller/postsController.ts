@@ -6,7 +6,10 @@ import {
   getPostsByAuthor,
   updatePost,
   deletePost,
-  isAdmin,
+  createComment,
+  deleteComment,
+  getCommentsByPost,
+  getCommentById,
 } from '../db/queries';
 import { getAuth } from '@clerk/express';
 
@@ -145,5 +148,87 @@ export const handleDeletePost = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Failed to delete post' });
+  }
+};
+
+// comments related
+export const handleGetCommentsByPost = async (req: Request, res: Response) => {
+  try {
+    const { postId } = req.params as { postId: string };
+    const comments = await getCommentsByPost(postId);
+    res.status(200).json(comments);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Failed to get comments' });
+  }
+};
+
+export const handleCreateComment = async (req: Request, res: Response) => {
+  try {
+    const { userId } = getAuth(req);
+    const { postId } = req.params as { postId: string };
+    const { content } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const post = await getPostById(postId);
+
+    if (!post) {
+      return res
+        .status(404)
+        .json({ error: 'Cannot comment on a non-existent post' });
+    }
+
+    if (!content.trim()) {
+      return (
+        res
+          //   400: bad request
+          .status(400)
+          .json({ error: 'Content is required' })
+      );
+    }
+
+    const newComment = await createComment({
+      content,
+      authorId: userId,
+      postId,
+    });
+
+    res.status(201).json(newComment);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Failed to create comment' });
+  }
+};
+
+export const handleDeleteComment = async (req: Request, res: Response) => {
+  try {
+    const { userId, sessionClaims } = getAuth(req);
+    const { commentId } = req.params as { commentId: string };
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const comment = await getCommentById(commentId);
+
+    if (!comment) return res.status(404).json({ error: 'Comment not found' });
+
+    const userRole = sessionClaims?.role;
+
+    if (comment.authorId !== userId && userRole !== 'admin') {
+      return res
+        .status(403)
+        .json({ error: 'You can only delete your own comments' });
+    }
+
+    const deletedComment = await deleteComment(commentId);
+
+    res.status(200).json(deletedComment);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Failed to delete comment' });
   }
 };
