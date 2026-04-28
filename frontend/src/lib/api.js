@@ -54,3 +54,19 @@ export const cancelUpvote = async (postId) => {
   const { data } = await api.delete(`/votes/${postId}`);
   return data;
 };
+
+// comments
+export const getCommentsByPost = async (postId) => {
+  const { data } = await api.get(`/posts/${postId}/comments`);
+  return data;
+};
+
+export const createComment = async ({ postId, ...commentData }) => {
+  const { data } = await api.post(`/posts/${postId}/comments`, commentData);
+  return data;
+};
+
+export const deleteComment = async (commendId) => {
+  const { data } = await api.delete(`/posts/comments/${commendId}`);
+  return data;
+};

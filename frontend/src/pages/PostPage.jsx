@@ -8,6 +8,7 @@ import VoteButton from '../components/VoteButton';
 import AdminActions from '../components/AdminActions';
 import LoadingSpinner from '../components/LoadingSpinner';
 import NotFoundPage from '../components/NotFoundPage';
+import CommentsSection from '../components/CommentsSection';
 
 const renderStat = (value, error) => {
   if (error) return '—';
@@ -102,6 +103,12 @@ const PostPage = () => {
           <VoteButton post={post} className="mt-auto" />
         </div>
       </article>
+      {/* comments */}
+      <div className="card bg-base-100 mb-6">
+        <div className="card-body">
+          <CommentsSection isAdmin={isAdmin} postId={post.id} />
+        </div>
+      </div>
     </section>
   );
 };

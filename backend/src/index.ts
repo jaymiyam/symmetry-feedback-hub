@@ -33,3 +33,5 @@ app.get('/api', (req, res) => {
 app.listen(ENV.PORT, () => {
   console.log(`Backend server listening on port ${ENV.PORT}`);
 });
+
+export default app;

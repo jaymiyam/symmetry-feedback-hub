@@ -9,6 +9,9 @@ import {
   deletePost,
   upvote,
   cancelUpvote,
+  getCommentsByPost,
+  createComment,
+  deleteComment,
 } from '../lib/api';
 
 export const QUERY_KEYS = {
@@ -16,6 +19,7 @@ export const QUERY_KEYS = {
   POST: (postId) => ['post', postId],
   AUTHOR_POSTS: ['posts', 'author'],
   STATS: (authorId) => ['stats', authorId],
+  COMMENTS: (postId) => ['comments', postId],
 };
 
 export const useGetAuthorStats = (authorId) => {
@@ -26,6 +30,7 @@ export const useGetAuthorStats = (authorId) => {
   });
 };
 
+// posting
 export const useGetAllPosts = () => {
   return useQuery({ queryKey: QUERY_KEYS.POSTS, queryFn: getAllPosts });
 };
@@ -87,6 +92,7 @@ export const useDeletePost = () => {
   });
 };
 
+// voting
 export const useUpvote = () => {
   const queryClient = useQueryClient();
 
@@ -110,6 +116,44 @@ export const useCancelUpvote = () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POSTS });
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.POST(postId),
+      });
+    },
+  });
+};
+
+// commenting
+export const useGetComments = (postId) => {
+  return useQuery({
+    queryKey: QUERY_KEYS.COMMENTS(postId),
+    queryFn: () => getCommentsByPost(postId),
+    enabled: !!postId,
+  });
+};
+
+export const useCreateComment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    // We pass the content string; the hook handles the postId
+    mutationFn: createComment,
+    onSuccess: (_, variables) => {
+      // Refresh only the comments for THIS post
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.COMMENTS(variables.postId),
+      });
+    },
+  });
+};
+
+export const useDeleteComment = (postId) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteComment,
+    onSuccess: () => {
+      // Refresh the list after the comment is gone
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.COMMENTS(postId),
       });
     },
   });
