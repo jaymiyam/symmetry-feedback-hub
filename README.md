@@ -2,6 +2,10 @@
 
 A professional-grade feedback management system built for web design platforms. This project facilitates seamless communication between users and administrators, featuring a robust voting system, commenting functionality, and granular administrative controls.
 
+## 🚀 Live Demo
+
+[Live Demo](https://symmetry-feedback-hub.vercel.app/)
+
 ## Screenshot
 
 Homepage
@@ -11,10 +15,6 @@ Homepage
 Admin actions
 
 ![Admin actions](public/screenshot-adminActions.png)
-
-## 🚀 Live Demo
-
-[Link to your hosted project - e.g., Vercel/Railway]
 
 ## 🛠 Tech Stack
 
