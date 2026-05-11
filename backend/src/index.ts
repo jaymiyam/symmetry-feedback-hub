@@ -2,6 +2,7 @@ import express from 'express';
 import { ENV } from './config/env';
 import { clerkMiddleware } from '@clerk/express';
 import cors from 'cors';
+import { healthCheck } from './db/queries';
 
 import postsRouter from './routes/postsRoutes';
 import usersRouter from './routes/usersRoutes';
@@ -28,6 +29,15 @@ app.get('/api', (req, res) => {
       votes: 'api/votes',
     },
   });
+});
+
+app.get('/api/health', async (req, res) => {
+  try {
+    const data = await healthCheck();
+    res.json({ status: 'ok', data });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: 'DB Connection Failed' });
+  }
 });
 
 app.listen(ENV.PORT, () => {

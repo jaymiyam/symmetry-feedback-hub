@@ -13,6 +13,11 @@ import type {
   NewComment,
 } from './schema';
 
+// health
+export const healthCheck = async () => {
+  return await db.select().from(posts).limit(1);
+};
+
 // users
 export const createUser = async (data: NewUser) => {
   const [insertedUser]: User[] = await db
